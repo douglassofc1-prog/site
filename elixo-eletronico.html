@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lixo Eletrônico – Descarte Correto</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&family=Space+Grotesk:wght@400;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --green-dark: #1a4a1f;
+    --green-mid: #2d7a35;
+    --green-light: #5aab5e;
+    --green-pale: #c8e6c9;
+    --cream: #f4f0e8;
+    --white: #ffffff;
+  }
+
+  body {
+    background: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  .card {
+    width: 600px;
+    background: var(--white);
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 2px 40px rgba(0,0,0,0.08);
+    position: relative;
+  }
+
+  /* Decorative nature background */
+  .bg-nature {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    opacity: 0.06;
+  }
+  .bg-nature svg { width: 100%; height: 100%; }
+
+  /* Header */
+  .header {
+    background: var(--green-dark);
+    padding: 32px 36px 28px;
+    position: relative;
+  }
+  .header-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--green-light);
+    margin-bottom: 8px;
+  }
+  .header-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.1;
+  }
+  .header-title span {
+    color: var(--green-light);
+  }
+  .header-sub {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--green-pale);
+    margin-top: 8px;
+    letter-spacing: 0.5px;
+  }
+
+  /* Leaf accent */
+  .leaf-accent {
+    position: absolute;
+    right: 30px;
+    top: 20px;
+    opacity: 0.18;
+  }
+
+  /* Content */
+  .content {
+    padding: 28px 36px 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .category {
+    margin-bottom: 22px;
+  }
+
+  .cat-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1.5px solid var(--green-pale);
+  }
+  .cat-icon {
+    width: 28px;
+    height: 28px;
+    background: var(--green-dark);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .cat-icon svg { width: 16px; height: 16px; fill: var(--green-light); }
+  .cat-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--green-dark);
+  }
+
+  .items-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .item-tag {
+    background: var(--cream);
+    border: 1px solid #d8e8d9;
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 400;
+    color: #2c4a2e;
+    line-height: 1.6;
+    transition: background 0.2s;
+  }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--green-pale), transparent);
+    margin: 4px 0 20px;
+  }
+
+  /* Footer */
+  .footer {
+    background: var(--green-dark);
+    padding: 18px 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .footer-msg {
+    font-size: 11px;
+    color: var(--green-pale);
+    font-weight: 300;
+    max-width: 200px;
+    line-height: 1.5;
+  }
+  .footer-msg strong {
+    color: var(--white);
+    font-weight: 600;
+    display: block;
+    font-size: 13px;
+    margin-bottom: 2px;
+  }
+
+  .logos {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .logo-box {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 6px;
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .logo-unip {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 900;
+    font-size: 20px;
+    font-style: italic;
+    color: #FFE500;
+    letter-spacing: -1px;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+  }
+  .logo-unip-sub {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 6px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: #FFE500;
+    text-align: center;
+    margin-top: 1px;
+  }
+  .logo-apae-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .logo-apae-icon {
+    width: 28px;
+    height: 28px;
+  }
+  .logo-apae-text {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--white);
+    margin-top: 2px;
+    letter-spacing: 1px;
+  }
+
+  .recycle-badge {
+    width: 36px;
+    height: 36px;
+    background: var(--green-mid);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .recycle-badge svg { width: 20px; height: 20px; fill: var(--white); }
+</style>
+</head>
+<body>
+
+<div class="card">
+
+  <!-- Background subtle leaf texture -->
+  <div class="bg-nature">
+    <svg viewBox="0 0 600 900" xmlns="http://www.w3.org/2000/svg">
+      <!-- Decorative leaves scattered -->
+      <ellipse cx="520" cy="150" rx="60" ry="25" fill="#2d7a35" transform="rotate(-30 520 150)"/>
+      <ellipse cx="80" cy="300" rx="50" ry="20" fill="#2d7a35" transform="rotate(20 80 300)"/>
+      <ellipse cx="560" cy="500" rx="45" ry="18" fill="#2d7a35" transform="rotate(-15 560 500)"/>
+      <ellipse cx="40" cy="600" rx="55" ry="22" fill="#2d7a35" transform="rotate(35 40 600)"/>
+      <ellipse cx="540" cy="780" rx="48" ry="19" fill="#2d7a35" transform="rotate(-25 540 780)"/>
+      <ellipse cx="100" cy="820" rx="52" ry="21" fill="#2d7a35" transform="rotate(15 100 820)"/>
+    </svg>
+  </div>
+
+  <!-- Header -->
+  <div class="header">
+    <!-- Leaf accent SVG -->
+    <svg class="leaf-accent" width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <path d="M60 10 C80 10, 110 40, 110 70 C110 95, 85 110, 60 110 C35 110, 10 95, 10 70 C10 40, 40 10, 60 10Z" fill="white"/>
+      <line x1="60" y1="10" x2="60" y2="110" stroke="#1a4a1f" stroke-width="2"/>
+      <line x1="60" y1="40" x2="85" y2="60" stroke="#1a4a1f" stroke-width="1.5"/>
+      <line x1="60" y1="55" x2="35" y2="72" stroke="#1a4a1f" stroke-width="1.5"/>
+      <line x1="60" y1="70" x2="82" y2="84" stroke="#1a4a1f" stroke-width="1.5"/>
+    </svg>
+    <div class="header-label">Atividade de Extensão</div>
+    <div class="header-title">Lixo <span>Eletrônico</span><br>Tem Destino Certo.</div>
+    <div class="header-sub">Descarte aqui os itens aceitos nesta caixa</div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- Category 1 -->
+    <div class="category">
+      <div class="cat-header">
+        <div class="cat-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17 2H7C5.9 2 5 2.9 5 4v16c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-5 18c-.83 0-1.5-.67-1.5-1.5S11.17 17 12 17s1.5.67 1.5 1.5S12.83 20 12 20zm5-4H7V4h10v12z"/></svg>
+        </div>
+        <span class="cat-title">Comunicação &amp; Informática</span>
+      </div>
+      <div class="items-grid">
+        <span class="item-tag">Celulares</span>
+        <span class="item-tag">Smartphones</span>
+        <span class="item-tag">Tablets</span>
+        <span class="item-tag">E-readers</span>
+        <span class="item-tag">Telefones sem fio</span>
+        <span class="item-tag">Modems</span>
+        <span class="item-tag">Roteadores</span>
+        <span class="item-tag">Notebooks</span>
+        <span class="item-tag">Fontes de energia</span>
+      </div>
+    </div>
+
+    <!-- Category 2 -->
+    <div class="category">
+      <div class="cat-header">
+        <div class="cat-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12zM6 10h2v2H6zm0 4h8v2H6zm10 0h2v2h-2zm-6-4h8v2h-8z"/></svg>
+        </div>
+        <span class="cat-title">Acessórios &amp; Periféricos</span>
+      </div>
+      <div class="items-grid">
+        <span class="item-tag">Fones de ouvido</span>
+        <span class="item-tag">Mouses</span>
+        <span class="item-tag">Teclados</span>
+        <span class="item-tag">Carregadores</span>
+        <span class="item-tag">Cabos USB / HDMI</span>
+        <span class="item-tag">Power Banks</span>
+        <span class="item-tag">Pen drives</span>
+        <span class="item-tag">Cartões de memória</span>
+        <span class="item-tag">Controles remotos</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Category 3 -->
+    <div class="category">
+      <div class="cat-header">
+        <div class="cat-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 3v1H4v2h1v13a2 2 0 002 2h10a2 2 0 002-2V6h1V4h-5V3H9zm0 5h2v9H9V8zm4 0h2v9h-2V8z"/></svg>
+        </div>
+        <span class="cat-title">Pequenos Eletrodomésticos</span>
+      </div>
+      <div class="items-grid">
+        <span class="item-tag">Secadores de cabelo</span>
+        <span class="item-tag">Chapinhas</span>
+        <span class="item-tag">Barbeadores elétricos</span>
+        <span class="item-tag">Chaleiras elétricas</span>
+        <span class="item-tag">Ferros de passar</span>
+        <span class="item-tag">Torradeiras</span>
+        <span class="item-tag">Mixers</span>
+        <span class="item-tag">Batedeiras</span>
+        <span class="item-tag">Cafeteiras</span>
+        <span class="item-tag">Balanças digitais</span>
+      </div>
+    </div>
+
+    <!-- Category 4 -->
+    <div class="category">
+      <div class="cat-header">
+        <div class="cat-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M22 9V7h-2V5c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-2h2v-2h-2v-2h2v-2h-2V9h2zm-4 10H4V5h14v14z"/></svg>
+        </div>
+        <span class="cat-title">Lazer &amp; Ferramentas</span>
+      </div>
+      <div class="items-grid">
+        <span class="item-tag">Consoles portáteis</span>
+        <span class="item-tag">Câmeras fotográficas</span>
+        <span class="item-tag">Smartwatches</span>
+        <span class="item-tag">Pulseiras inteligentes</span>
+        <span class="item-tag">Brinquedos eletrônicos</span>
+        <span class="item-tag">Parafusadeiras elétricas</span>
+        <span class="item-tag">Ferramentas de bricolagem</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer with logos -->
+  <div class="footer">
+    <div class="footer-msg">
+      <strong>Descarta. Respira.</strong>
+      Menos lixo, mais vida. Obrigado por contribuir com o planeta.
+    </div>
+    <div class="logos">
+      <!-- UNIP logo -->
+      <div class="logo-box">
+        <div>
+          <div class="logo-unip">UNIP</div>
+          <div class="logo-unip-sub">UNIVERSIDADE PAULISTA</div>
+        </div>
+      </div>
+      <!-- APAE logo -->
+      <div class="logo-box">
+        <div class="logo-apae-wrap">
+          <svg class="logo-apae-icon" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+            <!-- Hands -->
+            <path d="M10 35 C8 30, 6 22, 12 18 C16 15, 20 18, 20 22 L20 30" fill="none" stroke="#aaa" stroke-width="3" stroke-linecap="round"/>
+            <path d="M50 35 C52 30, 54 22, 48 18 C44 15, 40 18, 40 22 L40 30" fill="none" stroke="#aaa" stroke-width="3" stroke-linecap="round"/>
+            <!-- Stem -->
+            <line x1="30" y1="50" x2="30" y2="28" stroke="#4caf50" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- Leaves -->
+            <ellipse cx="22" cy="40" rx="10" ry="4" fill="#4caf50" transform="rotate(-20 22 40)"/>
+            <ellipse cx="38" cy="40" rx="10" ry="4" fill="#4caf50" transform="rotate(20 38 40)"/>
+            <!-- Flower center -->
+            <circle cx="30" cy="22" r="5" fill="#e67e22"/>
+            <!-- Petals -->
+            <ellipse cx="30" cy="13" rx="3.5" ry="5.5" fill="#FFD600"/>
+            <ellipse cx="39" cy="16" rx="3.5" ry="5.5" fill="#FFD600" transform="rotate(45 39 16)"/>
+            <ellipse cx="39" cy="28" rx="3.5" ry="5.5" fill="#FFD600" transform="rotate(90 39 28)"/>
+            <ellipse cx="30" cy="31" rx="3.5" ry="5.5" fill="#FFD600" transform="rotate(180 30 31)"/>
+            <ellipse cx="21" cy="28" rx="3.5" ry="5.5" fill="#FFD600" transform="rotate(-90 21 28)"/>
+            <ellipse cx="21" cy="16" rx="3.5" ry="5.5" fill="#FFD600" transform="rotate(-45 21 16)"/>
+          </svg>
+          <div class="logo-apae-text">APAE</div>
+        </div>
+      </div>
+      <!-- Recycle icon -->
+      <div class="recycle-badge">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L8.5 8.5H11V13H13V8.5H15.5L12 2ZM5.5 8.5L2 15L4.5 15L7.5 15L6 17.5L8.5 22H15.5L14 19.5H10L11.5 17H14L16 15H8.5L7 12.5L5.5 8.5ZM18.5 8.5L17 12L18.5 14.5H16L14.5 17L16 19.5L18.5 22H22L20 17.5L22 15L19.5 15L22 8.5H18.5Z"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
