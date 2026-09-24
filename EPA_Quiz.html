@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EPA — Quiz Interativo</title>
+<style>
+  :root {
+    --preto: #111111;
+    --cinza-1: #333333;
+    --cinza-2: #666666;
+    --cinza-3: #e7e7e7;
+    --cinza-4: #f6f6f6;
+    --azul: #dfe8f3;
+    --azul-b: #4c6783;
+    --verde: #edf3e4;
+    --verde-b: #60784c;
+    --ocre: #f5ece3;
+    --ocre-b: #8c6239;
+    --vermelho: #f5e3e3;
+    --vermelho-b: #8c3939;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #ececec;
+    color: var(--preto);
+    font-family: "Garamond", "EB Garamond", "Times New Roman", serif;
+    line-height: 1.35;
+    font-size: 15px;
+    padding: 16px;
+  }
+  .pagina {
+    max-width: 780px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 18px 22px 24px 22px;
+    box-shadow: 0 0 18px rgba(0,0,0,0.1);
+    border: 1px solid #000;
+  }
+  .topo {
+    border-top: 2.2px solid #000;
+    border-bottom: 2.2px solid #000;
+    padding: 8px 0;
+    margin-bottom: 14px;
+    text-align: center;
+  }
+  .topo .curso {
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--cinza-1);
+    margin-bottom: 2px;
+  }
+  .topo h1 {
+    margin: 0;
+    font-size: 22px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .topo .sub {
+    margin-top: 2px;
+    font-size: 12px;
+    color: var(--cinza-2);
+  }
+  h2 {
+    font-size: 17px;
+    margin: 0 0 6px 0;
+    padding-bottom: 3px;
+    border-bottom: 1.3px solid #000;
+    text-transform: uppercase;
+  }
+  .painel {
+    background: var(--cinza-4);
+    border: 1px solid #cfcfcf;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+  }
+  .filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .filtros label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    border: 1px solid #000;
+    padding: 4px 10px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .filtros input[type="checkbox"] { cursor: pointer; }
+  .qtd-select {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+  .qtd-select select {
+    font-family: inherit;
+    font-size: 14px;
+    padding: 3px 6px;
+    border: 1px solid #000;
+  }
+  button.botao {
+    font-family: inherit;
+    font-size: 15px;
+    padding: 9px 18px;
+    background: var(--preto);
+    color: #fff;
+    border: 1px solid #000;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  button.botao:hover { background: #333; }
+  button.botao.secundario {
+    background: #fff;
+    color: var(--preto);
+  }
+  button.botao.secundario:hover { background: var(--cinza-3); }
+  button.botao:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .barra-progresso {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: var(--cinza-2);
+    margin-bottom: 8px;
+  }
+  .tag-nivel {
+    display: inline-block;
+    border: 1px solid #000;
+    padding: 1px 8px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .tag-nivel.facil { background: var(--verde); border-color: var(--verde-b); }
+  .tag-nivel.medio { background: var(--ocre); border-color: var(--ocre-b); }
+  .tag-nivel.dificil { background: var(--vermelho); border-color: var(--vermelho-b); }
+  .tag-modulo {
+    font-size: 11px;
+    color: var(--cinza-2);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .card-pergunta {
+    border: 1px solid #000;
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+  .cabecalho-pergunta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .texto-pergunta {
+    font-size: 17px;
+    margin: 8px 0 14px 0;
+    font-weight: bold;
+  }
+  .opcao {
+    display: block;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+    font-size: 15px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    border: 1px solid #444;
+    background: #fff;
+    cursor: pointer;
+  }
+  .opcao:hover:not(:disabled) { background: var(--cinza-4); }
+  .opcao.correta {
+    background: var(--verde);
+    border-color: var(--verde-b);
+    font-weight: bold;
+  }
+  .opcao.errada-escolhida {
+    background: var(--vermelho);
+    border-color: var(--vermelho-b);
+    font-weight: bold;
+  }
+  .opcao:disabled { cursor: default; }
+  .feedback-box {
+    margin-top: 10px;
+    padding: 10px 14px;
+    border-left: 3px solid var(--azul-b);
+    background: var(--azul);
+  }
+  .feedback-box.acerto { border-left-color: var(--verde-b); background: var(--verde); }
+  .feedback-box.erro { border-left-color: var(--vermelho-b); background: var(--vermelho); }
+  .feedback-box .veredito {
+    font-weight: bold;
+    margin-bottom: 3px;
+  }
+  .rodape-pergunta {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 12px;
+  }
+  .tela-resultado {
+    text-align: center;
+    padding: 20px 0;
+  }
+  .placar-grande {
+    font-size: 42px;
+    font-weight: bold;
+    margin: 10px 0;
+  }
+  .resumo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin: 16px 0;
+  }
+  .resumo-card {
+    border: 1px solid #000;
+    padding: 10px;
+  }
+  .resumo-card .numero { font-size: 24px; font-weight: bold; }
+  .resumo-card .rotulo { font-size: 12px; text-transform: uppercase; color: var(--cinza-2); }
+  .lista-revisao {
+    text-align: left;
+    margin-top: 16px;
+  }
+  .item-revisao {
+    border: 1px solid #ccc;
+    border-left: 3px solid var(--cinza-2);
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+  .item-revisao.acertou { border-left-color: var(--verde-b); }
+  .item-revisao.errou { border-left-color: var(--vermelho-b); }
+  .item-revisao .p { font-weight: bold; margin-bottom: 3px; }
+  .oculto { display: none !important; }
+  .acoes-finais {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+  }
+  .aviso-vazio {
+    text-align: center;
+    padding: 20px;
+    color: var(--cinza-2);
+    font-size: 14px;
+  }
+  .rodape-nota {
+    margin-top: 16px;
+    padding-top: 8px;
+    border-top: 1px dashed #777;
+    font-size: 11.5px;
+    color: #333;
+  }
+</style>
+</head>
+<body>
+<div class="pagina">
+
+  <div class="topo">
+    <div class="curso">Evolução do Pensamento Administrativo (EPA) • Quiz interativo</div>
+    <h1>EPA — Quiz de Revisão</h1>
+    <div class="sub">Aula 1 (Introdução) • Módulo 2 (Clássica) • Módulo 3 (Humanística) • Módulo 4 (Neoclássica) — base: CHIAVENATO, 2003</div>
+  </div>
+
+  <!-- TELA DE CONFIGURAÇÃO -->
+  <div id="tela-config">
+    <div class="painel">
+      <h2 style="border:none;margin-bottom:8px;">Escolha as dificuldades</h2>
+      <div class="filtros">
+        <label><input type="checkbox" value="facil" class="filtro-nivel" checked> Fácil</label>
+        <label><input type="checkbox" value="medio" class="filtro-nivel" checked> Médio</label>
+        <label><input type="checkbox" value="dificil" class="filtro-nivel" checked> Difícil</label>
+      </div>
+      <div class="qtd-select">
+        <label for="qtd-perguntas">Quantidade de perguntas:</label>
+        <select id="qtd-perguntas">
+          <option value="10">10</option>
+          <option value="15" selected>15</option>
+          <option value="20">20</option>
+          <option value="30">30</option>
+          <option value="9999">Todas do filtro</option>
+        </select>
+      </div>
+      <div id="contador-banco" style="font-size:13px;color:var(--cinza-2);margin-bottom:10px;"></div>
+      <button class="botao" id="btn-comecar">Sortear e Começar</button>
+    </div>
+  </div>
+
+  <!-- TELA DO QUIZ -->
+  <div id="tela-quiz" class="oculto">
+    <div class="barra-progresso">
+      <span id="progresso-texto"></span>
+      <span id="placar-parcial"></span>
+    </div>
+    <div id="card-pergunta-container"></div>
+  </div>
+
+  <!-- TELA DE RESULTADO -->
+  <div id="tela-resultado" class="oculto"></div>
+
+  <div class="rodape-nota">
+    Fontes: Aula 1 – Introdução EPA; Módulo 2 – Abordagem Clássica; Módulo 3 – Abordagem Humanística; Módulo 4 – Abordagem Neoclássica. Bibliografia: CHIAVENATO, Idalberto. Introdução à Teoria Geral da Administração, 7ª ed., 2003, Elsevier.
+  </div>
+</div>
+
+<script>
+// ===================== BANCO DE QUESTÕES =====================
+const BANCO = [
+
+// ---------- AULA 1 — INTRODUÇÃO ----------
+{id:"a1f1", nivel:"facil", modulo:"Aula 1 – Introdução", q:"Segundo a FNQ, o que caracteriza uma 'organização'?", opcoes:[
+  "Companhia, corporação, firma, órgão ou empresa, pública ou privada, com ou sem fins lucrativos, que possui funções e estruturas administrativas próprias",
+  "Somente empresas privadas com fins lucrativos que possuem departamento de RH estruturado",
+  "Qualquer grupo de pessoas reunidas informalmente para um objetivo comum, sem estrutura definida",
+  "Instituição pública de grande porte que segue exclusivamente normas estatais de gestão"
+], correta:0, exp:"A FNQ define organização de forma ampla: companhia, corporação, firma, órgão, instituição ou empresa, pública ou privada, com ou sem fins lucrativos, de qualquer porte, com funções e estrutura administrativa próprias e autônomas."},
+
+{id:"a1f2", nivel:"facil", modulo:"Aula 1 – Introdução", q:"Onde e quando começou a Revolução Industrial, marco que impulsionou a necessidade da Administração como ciência?", opcoes:[
+  "Na Inglaterra, no século XVIII, com a mecanização da produção",
+  "Nos Estados Unidos, no início do século XX, com a linha de montagem de Ford",
+  "Na França, no século XIX, com a criação das primeiras fábricas têxteis",
+  "Na Alemanha, no século XVIII, com a expansão das minas de carvão"
+], correta:0, exp:"A Revolução Industrial começou no século XVIII, na Inglaterra, com a passagem do artesanato para a maquinofatura."},
+
+{id:"a1f3", nivel:"facil", modulo:"Aula 1 – Introdução", q:"Quais são as cinco variáveis básicas sobre as quais as escolas administrativas constroem seu foco de ênfase?", opcoes:[
+  "Tarefas, estrutura, pessoas, ambiente e tecnologia",
+  "Tarefas, liderança, comunicação, mercado e capital",
+  "Estrutura, cultura, inovação, clientes e concorrência",
+  "Pessoas, processos, tecnologia, qualidade e lucro"
+], correta:0, exp:"As variáveis básicas da administração citadas no material são: tarefas, estrutura, pessoas, ambiente e tecnologia."},
+
+{id:"a1f4", nivel:"facil", modulo:"Aula 1 – Introdução", q:"Em qual nível hierárquico predominam as habilidades conceituais do administrador?", opcoes:[
+  "Alta direção / nível institucional",
+  "Gerência / nível intermediário",
+  "Supervisão / nível operacional",
+  "Predominam igualmente em todos os níveis, sem distinção"
+], correta:0, exp:"As habilidades conceituais (concepção de ideias) predominam na alta direção, no nível institucional."},
+
+{id:"a1f5", nivel:"facil", modulo:"Aula 1 – Introdução", q:"Em qual nível hierárquico predominam as habilidades técnicas do administrador?", opcoes:[
+  "Supervisão / nível operacional",
+  "Alta direção / nível institucional",
+  "Gerência / nível intermediário",
+  "Nível estratégico corporativo, acima da direção"
+], correta:0, exp:"As habilidades técnicas (manuseio de coisas físicas) predominam na supervisão, no nível operacional."},
+
+{id:"a1m1", nivel:"medio", modulo:"Aula 1 – Introdução", q:"Qual das alternativas descreve corretamente a diferença entre eficiência e eficácia?", opcoes:[
+  "Eficiência tem ênfase nos meios (fazer corretamente as coisas); eficácia tem ênfase nos resultados (fazer as coisas certas)",
+  "Eficiência tem ênfase nos resultados; eficácia tem ênfase nos meios e no cumprimento de tarefas",
+  "Eficiência e eficácia são sinônimos e podem ser usados de forma intercambiável na administração",
+  "Eficiência refere-se apenas ao nível operacional; eficácia refere-se apenas ao nível institucional"
+], correta:0, exp:"Eficiência é fazer corretamente as coisas, com ênfase nos meios; eficácia é fazer as coisas certas, com ênfase nos resultados. O ideal é ser eficaz com a maior eficiência possível."},
+
+{id:"a1m2", nivel:"medio", modulo:"Aula 1 – Introdução", q:"Segundo a Aula 1, quais são as quatro etapas do Processo Administrativo (P.A.)?", opcoes:[
+  "Planejamento, organização, direção (liderança) e controle",
+  "Previsão, organização, comando e coordenação",
+  "Planejamento, execução, avaliação e correção",
+  "Organização, direção, supervisão e comando"
+], correta:0, exp:"O P.A. apresentado na Aula 1 é composto por planejamento, organização, direção (liderança) e controle."},
+
+{id:"a1m3", nivel:"medio", modulo:"Aula 1 – Introdução", q:"O que caracterizou a Era Industrial Clássica (1900–1950)?", opcoes:[
+  "Início da industrialização, estabilidade, previsibilidade e certeza",
+  "Aceleração da mudança, imprevisibilidade e ênfase em tecnologia da informação",
+  "Fim da previsibilidade e forte inovação com foco em serviços e globalização",
+  "Predomínio da economia agrária e ausência de teorias administrativas formais"
+], correta:0, exp:"A Era Industrial Clássica (1900–1950) foi marcada por início da industrialização, estabilidade, previsibilidade e certeza, com teorias como Administração Científica e Teoria Clássica."},
+
+{id:"a1m4", nivel:"medio", modulo:"Aula 1 – Introdução", q:"O que foi o 'ludismo', mencionado como reação dos trabalhadores à Revolução Industrial?", opcoes:[
+  "Um movimento de revolta contra as máquinas",
+  "Um movimento político de reivindicação de direitos parlamentares",
+  "Uma técnica pioneira de racionalização do trabalho fabril",
+  "Um sindicato formado por engenheiros ingleses do século XVIII"
+], correta:0, exp:"O ludismo foi a revolta dos trabalhadores contra as máquinas; o cartismo foi o movimento político correspondente."},
+
+{id:"a1m5", nivel:"medio", modulo:"Aula 1 – Introdução", q:"O 'cartismo', citado junto ao ludismo, foi:", opcoes:[
+  "Um movimento político dos trabalhadores durante a Revolução Industrial",
+  "Uma técnica de estudo de tempos e movimentos usada nas fábricas inglesas",
+  "O nome dado à mecanização da produção têxtil na Inglaterra",
+  "Uma escola filosófica que influenciou o método cartesiano de Descartes"
+], correta:0, exp:"O cartismo foi o movimento político dos trabalhadores, em paralelo ao ludismo (revolta contra as máquinas)."},
+
+{id:"a1d1", nivel:"dificil", modulo:"Aula 1 – Introdução", q:"Uma empresa atinge todas as suas metas do trimestre, mas desperdiça uma quantidade significativa de recursos no processo. Segundo o quadro de eficiência x eficácia do material, essa empresa é:", opcoes:[
+  "Eficaz, porém ineficiente",
+  "Eficiente, porém ineficaz",
+  "Eficiente e eficaz ao mesmo tempo, sem ressalvas",
+  "Nem eficiente nem eficaz, pois desperdiçou recursos"
+], correta:0, exp:"Atingir metas e desperdiçar recursos corresponde à célula 'Ineficiente e Eficaz' do quadro: a empresa alcança os objetivos (eficácia), mas desperdiça recursos (ineficiência)."},
+
+{id:"a1d2", nivel:"dificil", modulo:"Aula 1 – Introdução", q:"Entre as influências históricas sobre a Administração citadas na Aula 1, qual conjunto está correto?", opcoes:[
+  "Filósofos clássicos, física de Newton, método cartesiano de Descartes, Igreja Católica e organização militar",
+  "Filósofos clássicos, Revolução Francesa, Teoria da Burocracia de Weber e sindicalismo inglês",
+  "Física de Newton, Revolução Russa, Igreja Católica e movimento ludista",
+  "Método cartesiano, Teoria dos Sistemas, organização militar e cartismo"
+], correta:0, exp:"O material cita como influências: filósofos (Sócrates, Platão, Aristóteles, entre outros), a física de Newton, o método cartesiano de Descartes, a Igreja Católica e a organização militar."},
+
+{id:"a1d3", nivel:"dificil", modulo:"Aula 1 – Introdução", q:"No 'Quadro 1 – Principais abordagens da administração', a ênfase em ESTRUTURA está associada a quais teorias?", opcoes:[
+  "Teoria Clássica, Teoria Neoclássica, Teoria da Burocracia e Teoria Estruturalista",
+  "Apenas à Teoria Clássica e à Administração Científica",
+  "Teoria das Relações Humanas e Teoria do Comportamento Organizacional",
+  "Apenas à Teoria da Contingência e à Teoria dos Sistemas"
+], correta:0, exp:"No Quadro 1, a ênfase em Estrutura aparece associada à Teoria Clássica/Neoclássica, à Teoria da Burocracia e à Teoria Estruturalista (esta também aparece em Ambiente)."},
+
+{id:"a1d4", nivel:"dificil", modulo:"Aula 1 – Introdução", q:"Segundo o ponto de atenção do material, qual é o ideal buscado por um bom administrador?", opcoes:[
+  "Ser eficaz com a maior eficiência possível",
+  "Ser apenas eficiente, pois a eficácia é consequência automática",
+  "Priorizar sempre a eficácia, mesmo com alto desperdício de recursos",
+  "Priorizar sempre a eficiência, ainda que os objetivos não sejam alcançados"
+], correta:0, exp:"O ideal apontado é ser eficaz com a maior eficiência possível — alcançar as metas sem desperdiçar recursos."},
+
+{id:"a1d5", nivel:"dificil", modulo:"Aula 1 – Introdução", q:"Qual afirmação sobre as 'Eras da Administração' está correta?", opcoes:[
+  "A Era da Informação (após 1990) tem ênfase em produtividade, qualidade, competitividade, cliente e globalização",
+  "A Era Industrial Neoclássica (1950–1990) é marcada por estabilidade e previsibilidade totais",
+  "A Era Industrial Clássica (1900–1950) já apresentava as Teorias de Sistemas e da Contingência",
+  "A Era da Informação antecede cronologicamente a Era Industrial Neoclássica"
+], correta:0, exp:"A Era da Informação (após 1990) traz tecnologia da informação, serviços, aceleração da mudança e ênfase em produtividade, qualidade, competitividade, cliente e globalização."},
+
+// ---------- MÓDULO 2 — ABORDAGEM CLÁSSICA ----------
+{id:"m2f1", nivel:"facil", modulo:"Módulo 2 – Abordagem Clássica", q:"Quem é o principal nome associado à Administração Científica, com ênfase nas tarefas?", opcoes:[
+  "Frederick Taylor",
+  "Henri Fayol",
+  "Elton Mayo",
+  "Peter Drucker"
+], correta:0, exp:"A Administração Científica, com ênfase nas tarefas, tem como principal nome Frederick Taylor (EUA, 1903)."},
+
+{id:"m2f2", nivel:"facil", modulo:"Módulo 2 – Abordagem Clássica", q:"Quem é o principal nome associado à Teoria Clássica, com ênfase na estrutura organizacional?", opcoes:[
+  "Henri Fayol",
+  "Frederick Taylor",
+  "Frank Gilbreth",
+  "Harrington Emerson"
+], correta:0, exp:"A Teoria Clássica, com ênfase na estrutura organizacional, tem como principal nome Henri Fayol (França, 1916)."},
+
+{id:"m2f3", nivel:"facil", modulo:"Módulo 2 – Abordagem Clássica", q:"Em que país e ano surgiu a Administração Científica?", opcoes:[
+  "EUA, 1903",
+  "França, 1916",
+  "Inglaterra, 1890",
+  "EUA, 1954"
+], correta:0, exp:"A Administração Científica surgiu nos EUA, em 1903, com Taylor."},
+
+{id:"m2f4", nivel:"facil", modulo:"Módulo 2 – Abordagem Clássica", q:"Em que país e ano surgiu a Teoria Clássica?", opcoes:[
+  "França, 1916",
+  "EUA, 1903",
+  "Inglaterra, 1932",
+  "EUA, 1954"
+], correta:0, exp:"A Teoria Clássica surgiu na França, em 1916, com Fayol."},
+
+{id:"m2f5", nivel:"facil", modulo:"Módulo 2 – Abordagem Clássica", q:"Segundo Fayol, quais são as seis funções da empresa?", opcoes:[
+  "Técnica, financeira, contábil, comercial, de segurança e administrativa",
+  "Técnica, financeira, comercial, de marketing, de RH e administrativa",
+  "Técnica, financeira, contábil, de vendas, de logística e administrativa",
+  "Financeira, contábil, comercial, de segurança, de TI e administrativa"
+], correta:0, exp:"Fayol definiu seis funções da empresa: técnica (produção), financeira, contábil, comercial, de segurança e administrativa (gerencial)."},
+
+{id:"m2m1", nivel:"medio", modulo:"Módulo 2 – Abordagem Clássica", q:"O que significa a sigla P-O-C-C-C, proposta por Fayol para a função administrativa?", opcoes:[
+  "Previsão, Organização, Comando, Coordenação e Controle",
+  "Planejamento, Organização, Comando, Comunicação e Controle",
+  "Previsão, Organização, Coordenação, Comunicação e Comando",
+  "Planejamento, Orçamento, Comando, Coordenação e Controle"
+], correta:0, exp:"P-O-C-C-C corresponde a Previsão, Organização, Comando, Coordenação e Controle — hoje conhecido como planejar, organizar, dirigir e controlar."},
+
+{id:"m2m2", nivel:"medio", modulo:"Módulo 2 – Abordagem Clássica", q:"A Organização Racional do Trabalho (ORT) corresponde a qual período da obra de Taylor?", opcoes:[
+  "1º período",
+  "2º período",
+  "3º período",
+  "Não faz parte da obra de Taylor, e sim da de Fayol"
+], correta:0, exp:"A ORT é o 1º período de Taylor, focado na execução das tarefas no nível operacional."},
+
+{id:"m2m3", nivel:"medio", modulo:"Módulo 2 – Abordagem Clássica", q:"Qual das opções abaixo é um dos 14 princípios gerais de Fayol?", opcoes:[
+  "Unidade de comando",
+  "Estudo de tempos e movimentos",
+  "Supervisão funcional",
+  "Amplitude administrativa"
+], correta:0, exp:"Unidade de comando é um dos 14 princípios de Fayol. Estudo de tempos e movimentos e supervisão funcional pertencem à ORT de Taylor; amplitude administrativa é retomada na Teoria Neoclássica."},
+
+{id:"m2m4", nivel:"medio", modulo:"Módulo 2 – Abordagem Clássica", q:"O conceito de 'homo economicus', aceito pela Abordagem Clássica, pressupõe que o trabalhador é motivado principalmente por:", opcoes:[
+  "Recompensas salariais e materiais",
+  "Reconhecimento social do grupo informal",
+  "Realização pessoal e autonomia criativa",
+  "Segurança emocional proporcionada pela liderança"
+], correta:0, exp:"O homo economicus é o homem motivado exclusivamente por recompensas salariais e materiais, conceito característico da Abordagem Clássica."},
+
+{id:"m2m5", nivel:"medio", modulo:"Módulo 2 – Abordagem Clássica", q:"Qual crítica está associada à Administração Científica de Taylor?", opcoes:[
+  "Mecanicismo e super-especialização do operário",
+  "Concepção ingênua e romântica do operário",
+  "Enfoque manipulativo das relações humanas",
+  "Campo experimental limitado e conclusões teóricas parciais"
+], correta:0, exp:"As críticas à Administração Científica incluem mecanicismo, super-especialização do operário, visão microscópica do homem e abordagem de sistema fechado."},
+
+{id:"m2d1", nivel:"dificil", modulo:"Módulo 2 – Abordagem Clássica", q:"Sobre a construção das teorias de Taylor e Fayol, o material afirma que:", opcoes:[
+  "Taylor construiu sua teoria 'de baixo para cima' (das tarefas para a organização); Fayol construiu a sua 'de cima para baixo' (do todo para as partes)",
+  "Taylor construiu sua teoria 'de cima para baixo'; Fayol construiu a sua 'de baixo para cima'",
+  "Ambos construíram suas teorias exatamente da mesma forma, partindo do nível operacional",
+  "Ambos partiram da visão geral da organização para os componentes específicos"
+], correta:0, exp:"Taylor veio do chão de fábrica e construiu sua teoria 'de baixo para cima'; Fayol veio do topo e construiu a sua 'de cima para baixo', do todo para as partes."},
+
+{id:"m2d2", nivel:"dificil", modulo:"Módulo 2 – Abordagem Clássica", q:"Qual afirmação sobre os dois períodos de Taylor está correta?", opcoes:[
+  "O 1º período é a ORT, voltada ao nível operacional; o 2º período é a Administração Científica propriamente dita, voltada ao nível gerencial",
+  "O 1º período é a Administração Científica propriamente dita; o 2º período é a ORT",
+  "Os dois períodos de Taylor tratam exclusivamente do nível gerencial, sem diferenças entre si",
+  "Taylor teve apenas um período de estudos, sem divisão em fases"
+], correta:0, exp:"O 1º período de Taylor foi a ORT (nível operacional); o 2º período, chamado propriamente de Administração Científica, levou os princípios ao nível gerencial."},
+
+{id:"m2d3", nivel:"dificil", modulo:"Módulo 2 – Abordagem Clássica", q:"Qual é a ênfase correta de cada autor da Abordagem Clássica?", opcoes:[
+  "Taylor → tarefas; Fayol → estrutura organizacional",
+  "Taylor → estrutura organizacional; Fayol → tarefas",
+  "Ambos têm ênfase nas pessoas, diferindo apenas no país de origem",
+  "Taylor → estrutura organizacional; Fayol → pessoas"
+], correta:0, exp:"Taylor tem ênfase nas tarefas (nível operacional); Fayol tem ênfase na estrutura organizacional."},
+
+{id:"m2d4", nivel:"dificil", modulo:"Módulo 2 – Abordagem Clássica", q:"Frank e Lílian Gilbreth, associados aos 'Therbligs' (movimentos elementares como procurar, pegar e transportar), contribuíram para:", opcoes:[
+  "O 2º período da Administração Científica, aprofundando o estudo de tempos e movimentos",
+  "A Teoria Clássica de Fayol, como coautores dos 14 princípios gerais",
+  "A Teoria das Relações Humanas, como membros do Grupo de Transição",
+  "A Abordagem Neoclássica, como colaboradores diretos de Peter Drucker"
+], correta:0, exp:"Frank e Lílian Gilbreth são citados no 2º período da Administração Científica, com o estudo de tempos e movimentos e os Therbligs."},
+
+{id:"m2d5", nivel:"dificil", modulo:"Módulo 2 – Abordagem Clássica", q:"Luther Gulick é citado no material como responsável por:", opcoes:[
+  "Sete elementos da função administrativa",
+  "Quatro princípios da administração",
+  "Os 14 princípios gerais de Fayol",
+  "O estudo de tempos e movimentos da ORT"
+], correta:0, exp:"Luther Gulick é citado pelos sete elementos da função administrativa; Urwick, pelos quatro princípios da administração."},
+
+// ---------- MÓDULO 3 — ABORDAGEM HUMANÍSTICA ----------
+{id:"m3f1", nivel:"facil", modulo:"Módulo 3 – Abordagem Humanística", q:"Quem é o principal representante da Teoria das Relações Humanas?", opcoes:[
+  "Elton Mayo",
+  "Frederick Taylor",
+  "Henri Fayol",
+  "Peter Drucker"
+], correta:0, exp:"Elton Mayo é o principal representante da Teoria das Relações Humanas, que conduziu a Experiência de Hawthorne."},
+
+{id:"m3f2", nivel:"facil", modulo:"Módulo 3 – Abordagem Humanística", q:"Onde foi conduzida a Experiência de Hawthorne?", opcoes:[
+  "Na fábrica da Western Electric, no bairro de Hawthorne, em Chicago",
+  "Na fábrica da Ford, em Detroit",
+  "Em uma mineradora na Inglaterra",
+  "Em uma fábrica têxtil na França"
+], correta:0, exp:"A Experiência de Hawthorne foi conduzida na fábrica da Western Electric, no bairro de Hawthorne (Chicago), de 1927 a 1932."},
+
+{id:"m3f3", nivel:"facil", modulo:"Módulo 3 – Abordagem Humanística", q:"Quantas fases teve a Experiência de Hawthorne?", opcoes:[
+  "Quatro",
+  "Duas",
+  "Três",
+  "Cinco"
+], correta:0, exp:"A Experiência de Hawthorne teve quatro fases: efeito da iluminação, sala de montagem de relés, programa de entrevistas e organização informal."},
+
+{id:"m3f4", nivel:"facil", modulo:"Módulo 3 – Abordagem Humanística", q:"O conceito de 'homo social', trazido pela Teoria das Relações Humanas, substituiu qual conceito da Abordagem Clássica?", opcoes:[
+  "Homo economicus",
+  "Homo faber",
+  "Homo sapiens",
+  "Homo administrativus"
+], correta:0, exp:"O homo social substituiu o homo economicus, deslocando o foco da motivação puramente salarial para as relações sociais."},
+
+{id:"m3f5", nivel:"facil", modulo:"Módulo 3 – Abordagem Humanística", q:"Quantas são as decorrências da Teoria das Relações Humanas apresentadas no material?", opcoes:[
+  "Cinco",
+  "Três",
+  "Quatro",
+  "Seis"
+], correta:0, exp:"São cinco decorrências: motivação, liderança, comunicação, organização informal e dinâmica de grupo."},
+
+{id:"m3m1", nivel:"medio", modulo:"Módulo 3 – Abordagem Humanística", q:"Qual fase da Experiência de Hawthorne comprovou a preponderância do fator psicológico sobre o fisiológico?", opcoes:[
+  "Fase 1 — efeito da iluminação",
+  "Fase 2 — sala de montagem de relés",
+  "Fase 3 — programa de entrevistas",
+  "Fase 4 — organização informal"
+], correta:0, exp:"A fase 1 (efeito da iluminação) comprovou a preponderância do fator psicológico sobre o fisiológico."},
+
+{id:"m3m2", nivel:"medio", modulo:"Módulo 3 – Abordagem Humanística", q:"Segundo Chiavenato (2003), quais são os três estilos de liderança?", opcoes:[
+  "Autocrática, democrática e liberal (laissez-faire)",
+  "Autocrática, participativa e situacional",
+  "Democrática, transformacional e transacional",
+  "Liberal, burocrática e carismática"
+], correta:0, exp:"Os três estilos de liderança apresentados são autocrática, democrática e liberal (laissez-faire)."},
+
+{id:"m3m3", nivel:"medio", modulo:"Módulo 3 – Abordagem Humanística", q:"Qual é a sequência correta do ciclo motivacional apresentado no material?", opcoes:[
+  "Equilíbrio → estímulo/necessidade/tensão → comportamento/ação → satisfação, retornando ao equilíbrio",
+  "Tensão → equilíbrio → satisfação → estímulo, sem retorno ao início",
+  "Satisfação → tensão → necessidade → equilíbrio final permanente",
+  "Estímulo → equilíbrio → comportamento → tensão contínua"
+], correta:0, exp:"O ciclo motivacional vai do equilíbrio ao estímulo/necessidade/tensão, depois ao comportamento/ação que gera satisfação, retornando ao equilíbrio."},
+
+{id:"m3m4", nivel:"medio", modulo:"Módulo 3 – Abordagem Humanística", q:"Mary Parker Follett, do Grupo de Transição, ficou conhecida por qual contribuição?", opcoes:[
+  "A lei da situação — não existe uma receita única válida para todas as situações",
+  "A Experiência de Hawthorne, com suas quatro fases",
+  "O conceito de homo social em oposição ao homo economicus",
+  "A criação da Organização Racional do Trabalho"
+], correta:0, exp:"Mary Parker Follett é conhecida pela 'lei da situação', segundo a qual não existe receita única para todas as situações."},
+
+{id:"m3m5", nivel:"medio", modulo:"Módulo 3 – Abordagem Humanística", q:"Kurt Lewin é citado no material em conexão direta com quais decorrências da Teoria das Relações Humanas?", opcoes:[
+  "Motivação (Teoria de Campo) e dinâmica de grupo",
+  "Comunicação e organização informal",
+  "Liderança e comunicação",
+  "Apenas com a decorrência de organização informal"
+], correta:0, exp:"Kurt Lewin aparece associado à Teoria de Campo (motivação) e à proposta de dinâmica de grupo."},
+
+{id:"m3d1", nivel:"dificil", modulo:"Módulo 3 – Abordagem Humanística", q:"Qual afirmação é correta sobre o Grupo de Transição e a Teoria das Relações Humanas?", opcoes:[
+  "O Grupo de Transição não é a mesma coisa que a Teoria das Relações Humanas: ele apenas preparou o terreno, revendo a posição clássica antes dela",
+  "O Grupo de Transição e a Teoria das Relações Humanas são exatamente a mesma corrente teórica",
+  "O Grupo de Transição surgiu depois da Teoria das Relações Humanas, para consolidá-la",
+  "Elton Mayo foi o principal integrante do Grupo de Transição"
+], correta:0, exp:"O Grupo de Transição (Munsterberg, Tead, Follett, Barnard) já revia a posição clássica antes da própria Teoria das Relações Humanas, mas não se confunde com ela."},
+
+{id:"m3d2", nivel:"dificil", modulo:"Módulo 3 – Abordagem Humanística", q:"As cinco decorrências da Teoria das Relações Humanas (motivação, liderança, comunicação, organização informal e dinâmica de grupo) surgiram:", opcoes:[
+  "Depois das conclusões da Experiência de Hawthorne",
+  "Antes da Experiência de Hawthorne, servindo de base para ela",
+  "Durante a própria Experiência de Hawthorne, como parte de suas quatro fases",
+  "De forma independente de Hawthorne, vindas apenas do Grupo de Transição"
+], correta:0, exp:"O material destaca que as cinco decorrências surgem depois de Hawthorne, não durante ou antes de suas conclusões."},
+
+{id:"m3d3", nivel:"dificil", modulo:"Módulo 3 – Abordagem Humanística", q:"O que a 4ª fase da Experiência de Hawthorne (organização informal) revelou?", opcoes:[
+  "Que o grupo criou regras próprias para estabilizar a produção, punindo quem as quebrasse, revelando a relação entre organização informal e formal",
+  "Que a iluminação do ambiente é o fator determinante da produtividade",
+  "Que entrevistas individuais não trazem informação relevante sobre relações humanas",
+  "Que a produção do grupo de controle superou a do grupo observado"
+], correta:0, exp:"A 4ª fase revelou que o grupo criava regras próprias para estabilizar a produção, punindo quem as quebrasse, evidenciando a relação entre organização informal e formal."},
+
+{id:"m3d4", nivel:"dificil", modulo:"Módulo 3 – Abordagem Humanística", q:"Qual das críticas abaixo pertence especificamente à Teoria das Relações Humanas (e não à Administração Científica)?", opcoes:[
+  "Concepção ingênua e romântica do operário",
+  "Mecanicismo e visão microscópica do homem",
+  "Extremo racionalismo e 'teoria da máquina'",
+  "Ausência de trabalhos experimentais e abordagem incompleta da organização"
+], correta:0, exp:"A concepção ingênua e romântica do operário é uma crítica à Teoria das Relações Humanas. Mecanicismo pertence à Administração Científica; racionalismo e 'teoria da máquina' pertencem à Teoria Clássica."},
+
+{id:"m3d5", nivel:"dificil", modulo:"Módulo 3 – Abordagem Humanística", q:"Segundo o material, o que caracteriza o 'moral elevado' de um grupo, em oposição ao 'moral baixo'?", opcoes:[
+  "Fanatismo, euforia, atitudes positivas, satisfação, cooperação e coesão",
+  "Pessimismo, oposição, negação dos objetivos organizacionais e resistência",
+  "Disforia, agressão, má vontade e dispersão do grupo",
+  "Insatisfação constante mesmo com boa liderança e bons resultados"
+], correta:0, exp:"Moral elevado envolve fanatismo, euforia, atitudes positivas, satisfação, otimismo, cooperação e coesão; moral baixo envolve pessimismo, oposição, resistência e disforia."},
+
+// ---------- MÓDULO 4 — ABORDAGEM NEOCLÁSSICA ----------
+{id:"m4f1", nivel:"facil", modulo:"Módulo 4 – Abordagem Neoclássica", q:"Em que ano e onde surge a Abordagem Neoclássica?", opcoes:[
+  "1954, nos EUA",
+  "1903, nos EUA",
+  "1916, na França",
+  "1932, nos EUA"
+], correta:0, exp:"A Abordagem Neoclássica surge em 1954, nos EUA, com proposta eclética."},
+
+{id:"m4f2", nivel:"facil", modulo:"Módulo 4 – Abordagem Neoclássica", q:"Quem é o principal representante da Abordagem Neoclássica?", opcoes:[
+  "Peter Drucker",
+  "Elton Mayo",
+  "Henri Fayol",
+  "Frederick Taylor"
+], correta:0, exp:"Peter Drucker é o principal representante da Abordagem Neoclássica."},
+
+{id:"m4f3", nivel:"facil", modulo:"Módulo 4 – Abordagem Neoclássica", q:"O que significa dizer que a Abordagem Neoclássica é 'eclética'?", opcoes:[
+  "Que ela seleciona e concilia aspectos de diferentes abordagens teóricas",
+  "Que ela rejeita totalmente qualquer conceito da Teoria Clássica",
+  "Que ela se aplica apenas a organizações de pequeno porte",
+  "Que ela ignora os resultados e objetivos organizacionais"
+], correta:0, exp:"Eclética significa que a Abordagem Neoclássica seleciona e concilia aspectos de diferentes abordagens, retomando conceitos clássicos combinados com foco em resultados."},
+
+{id:"m4f4", nivel:"facil", modulo:"Módulo 4 – Abordagem Neoclássica", q:"Quantos princípios básicos de organização são retomados pela Teoria Neoclássica, segundo o material?", opcoes:[
+  "Quatro: divisão do trabalho, especialização, hierarquia e amplitude administrativa",
+  "Três: divisão do trabalho, hierarquia e amplitude administrativa",
+  "Cinco: divisão do trabalho, especialização, hierarquia, amplitude e departamentalização",
+  "Dois: divisão do trabalho e hierarquia"
+], correta:0, exp:"São quatro os princípios retomados: divisão do trabalho, especialização, hierarquia e amplitude administrativa."},
+
+{id:"m4f5", nivel:"facil", modulo:"Módulo 4 – Abordagem Neoclássica", q:"O que é 'centralização', segundo o material?", opcoes:[
+  "Concentração da autoridade e da decisão no topo da organização",
+  "Distribuição da decisão para os níveis mais baixos da organização",
+  "Divisão do trabalho entre departamentos por especialidade",
+  "Agrupamento de atividades por tipo de cliente atendido"
+], correta:0, exp:"Centralização concentra a autoridade e a decisão no topo da organização; descentralização distribui a decisão para níveis mais baixos."},
+
+{id:"m4m1", nivel:"medio", modulo:"Módulo 4 – Abordagem Neoclássica", q:"Qual das opções abaixo é uma vantagem da descentralização citada no material?", opcoes:[
+  "Decisões tomadas mais rapidamente pelos próprios executores da ação",
+  "Redução do custo com seleção e treinamento de administradores médios",
+  "Maior uniformidade de políticas e procedimentos entre departamentos",
+  "Eliminação total do risco de subobjetivação"
+], correta:0, exp:"Uma vantagem da descentralização é que as decisões são tomadas mais rapidamente pelos próprios executores da ação, que têm mais informação sobre a situação."},
+
+{id:"m4m2", nivel:"medio", modulo:"Módulo 4 – Abordagem Neoclássica", q:"Como a Teoria Neoclássica revê o P-O-C-C-C de Fayol?", opcoes:[
+  "Como planejamento, organização, direção e controle",
+  "Como previsão, organização, comando e coordenação, sem alterações",
+  "Como planejamento, execução, avaliação e revisão",
+  "Como divisão do trabalho, especialização, hierarquia e amplitude"
+], correta:0, exp:"A Teoria Neoclássica retoma o P-O-C-C-C de Fayol e o revê como planejamento, organização, direção e controle."},
+
+{id:"m4m3", nivel:"medio", modulo:"Módulo 4 – Abordagem Neoclássica", q:"Qual é a principal característica da estrutura Linear, entre os tipos tradicionais de organização?", opcoes:[
+  "Autoridade linear/única, com unidade de comando e decisões centralizadas",
+  "Autoridade funcional dividida por especialidade, com decisões descentralizadas",
+  "Fusão entre autoridade única e autoridade dividida por especialidade",
+  "Ausência de qualquer forma de hierarquia formal"
+], correta:0, exp:"A estrutura Linear tem autoridade linear/única (unidade de comando), linhas formais de comunicação e decisões centralizadas."},
+
+{id:"m4m4", nivel:"medio", modulo:"Módulo 4 – Abordagem Neoclássica", q:"Qual é a principal característica da estrutura Funcional, entre os tipos tradicionais de organização?", opcoes:[
+  "Autoridade funcional/dividida por especialidade, com ênfase na especialização",
+  "Autoridade linear/única, com aspecto piramidal e decisões centralizadas",
+  "Separação entre órgãos operacionais (linha) e de apoio (staff)",
+  "Ausência de linhas diretas de comunicação entre especialistas"
+], correta:0, exp:"A estrutura Funcional tem autoridade funcional/dividida por especialidade, linhas diretas de comunicação e ênfase na especialização máxima."},
+
+{id:"m4m5", nivel:"medio", modulo:"Módulo 4 – Abordagem Neoclássica", q:"Qual das opções é uma vantagem da departamentalização por produtos/serviços?", opcoes:[
+  "Facilita a coordenação interdepartamental e a inovação",
+  "Agrupa especialistas e permite plena utilização das habilidades técnicas",
+  "É a mais indicada para pequenas empresas de estrutura simples",
+  "Elimina completamente a necessidade de coordenação entre unidades"
+], correta:0, exp:"A departamentalização por produtos/serviços facilita a coordenação interdepartamental e a inovação, sendo contraindicada em ambientes estáveis."},
+
+{id:"m4d1", nivel:"dificil", modulo:"Módulo 4 – Abordagem Neoclássica", q:"A estrutura Linha-Staff resulta de:", opcoes:[
+  "Fusão da estrutura Linear com a Funcional, separando órgãos operacionais (linha) de apoio (staff)",
+  "Substituição total da estrutura Linear pela Funcional, eliminando a hierarquia",
+  "Combinação exclusiva da departamentalização por processos com a geográfica",
+  "Aplicação isolada do princípio da amplitude administrativa"
+], correta:0, exp:"A Linha-Staff funde a estrutura Linear com a Funcional, separando órgãos operacionais (linha) de órgãos de apoio (staff), unindo hierarquia e especialização."},
+
+{id:"m4d2", nivel:"dificil", modulo:"Módulo 4 – Abordagem Neoclássica", q:"Sobre a natureza da Teoria Neoclássica, é correto afirmar que ela:", opcoes:[
+  "Não é uma teoria nova, e sim uma retomada eclética da Teoria Clássica, com foco em resultados e objetivos",
+  "É uma teoria completamente nova, sem qualquer relação com a Teoria Clássica",
+  "Rejeita integralmente os princípios de Fayol, substituindo-os por outros",
+  "Surge antes da Teoria Clássica, servindo de base para o pensamento de Fayol"
+], correta:0, exp:"A Teoria Neoclássica não é uma teoria nova, mas uma retomada eclética da Clássica, combinada com ênfase em objetivos e resultados."},
+
+{id:"m4d3", nivel:"dificil", modulo:"Módulo 4 – Abordagem Neoclássica", q:"Comparando a departamentalização por funções e por produtos/serviços, é correto dizer que:", opcoes:[
+  "A departamentalização por funções agrupa especialistas e utiliza plenamente habilidades técnicas, mas reduz a cooperação interdepartamental; a por produtos facilita a coordenação e a inovação",
+  "A departamentalização por funções facilita a inovação, enquanto a por produtos agrupa especialistas por área técnica",
+  "Ambas têm exatamente as mesmas vantagens e desvantagens, variando apenas o nome",
+  "A departamentalização por produtos é sempre superior à por funções, em qualquer ambiente"
+], correta:0, exp:"Por funções: agrupa especialistas e usa plenamente as habilidades técnicas, mas reduz cooperação interdepartamental. Por produtos: facilita coordenação interdepartamental e inovação, mas dispersa especialistas."},
+
+{id:"m4d4", nivel:"dificil", modulo:"Módulo 4 – Abordagem Neoclássica", q:"Sobre o processo da APO (Administração por Objetivos), o material afirma que ele é:", opcoes:[
+  "Participativo e democrático, com objetivos definidos em conjunto por gerentes e subordinados",
+  "Uma imposição unilateral do gerente, sem participação dos subordinados",
+  "Um processo exclusivamente automatizado, sem envolvimento humano",
+  "Restrito ao nível institucional, sem aplicação nos departamentos"
+], correta:0, exp:"A APO é um processo participativo e democrático: gerentes e subordinados definem juntos suas metas comuns."},
+
+{id:"m4d5", nivel:"dificil", modulo:"Módulo 4 – Abordagem Neoclássica", q:"No exemplo de encadeamento hierárquico de objetivos de Chiavenato (2003), o objetivo organizacional 'Retorno sobre o Investimento Empresarial' se desdobra em quais objetivos departamentais?", opcoes:[
+  "Aumento do Retorno e Redução do Investimento",
+  "Aumento do Faturamento e Aquisição de Novos Equipamentos",
+  "Utilização Eficiente dos Recursos e Recrutamento de Pessoal",
+  "Redução de Custos e Ampliação da Estrutura Organizacional"
+], correta:0, exp:"O objetivo organizacional de Retorno sobre o Investimento se desdobra em Aumento do Retorno e Redução do Investimento, que por sua vez geram os objetivos departamentais de Aumento do Faturamento e Redução de Custos."},
+
+];
+
+// ===================== ESTADO E LÓGICA =====================
+let sessao = { perguntas: [], indice: 0, acertos: 0, respostas: [] };
+
+function contarBanco() {
+  const niveis = Array.from(document.querySelectorAll(".filtro-nivel:checked")).map(c => c.value);
+  return BANCO.filter(q => niveis.includes(q.nivel)).length;
+}
+
+function atualizarContador() {
+  const total = contarBanco();
+  document.getElementById("contador-banco").textContent =
+    total + " pergunta(s) disponível(is) no filtro atual.";
+  document.getElementById("btn-comecar").disabled = total === 0;
+}
+
+document.querySelectorAll(".filtro-nivel").forEach(c => c.addEventListener("change", atualizarContador));
+atualizarContador();
+
+function embaralhar(array) {
+  const a = array.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+document.getElementById("btn-comecar").addEventListener("click", () => {
+  const niveis = Array.from(document.querySelectorAll(".filtro-nivel:checked")).map(c => c.value);
+  const pool = BANCO.filter(q => niveis.includes(q.nivel));
+  const qtd = parseInt(document.getElementById("qtd-perguntas").value, 10);
+  const selecionadas = embaralhar(pool).slice(0, Math.min(qtd, pool.length));
+
+  sessao = {
+    perguntas: selecionadas.map(q => {
+      const ordemOpcoes = embaralhar(q.opcoes.map((texto, i) => ({ texto, ehCorreta: i === q.correta })));
+      return { ...q, opcoesEmbaralhadas: ordemOpcoes };
+    }),
+    indice: 0,
+    acertos: 0,
+    respostas: []
+  };
+
+  document.getElementById("tela-config").classList.add("oculto");
+  document.getElementById("tela-resultado").classList.add("oculto");
+  document.getElementById("tela-quiz").classList.remove("oculto");
+  renderizarPergunta();
+});
+
+function rotuloNivel(nivel) {
+  return nivel === "facil" ? "Fácil" : nivel === "medio" ? "Médio" : "Difícil";
+}
+
+function renderizarPergunta() {
+  const p = sessao.perguntas[sessao.indice];
+  document.getElementById("progresso-texto").textContent =
+    "Pergunta " + (sessao.indice + 1) + " de " + sessao.perguntas.length;
+  document.getElementById("placar-parcial").textContent =
+    "Acertos: " + sessao.acertos;
+
+  const cont = document.getElementById("card-pergunta-container");
+  cont.innerHTML = "";
+
+  const card = document.createElement("div");
+  card.className = "card-pergunta";
+
+  const cab = document.createElement("div");
+  cab.className = "cabecalho-pergunta";
+  cab.innerHTML =
+    '<span class="tag-nivel ' + p.nivel + '">' + rotuloNivel(p.nivel) + '</span>' +
+    '<span class="tag-modulo">' + p.modulo + '</span>';
+  card.appendChild(cab);
+
+  const texto = document.createElement("div");
+  texto.className = "texto-pergunta";
+  texto.textContent = p.q;
+  card.appendChild(texto);
+
+  const opcoesDiv = document.createElement("div");
+  p.opcoesEmbaralhadas.forEach((op, idx) => {
+    const btn = document.createElement("button");
+    btn.className = "opcao";
+    btn.textContent = op.texto;
+    btn.addEventListener("click", () => responder(idx));
+    opcoesDiv.appendChild(btn);
+  });
+  card.appendChild(opcoesDiv);
+
+  const feedback = document.createElement("div");
+  feedback.id = "feedback-atual";
+  card.appendChild(feedback);
+
+  const rodape = document.createElement("div");
+  rodape.className = "rodape-pergunta";
+  const btnProx = document.createElement("button");
+  btnProx.className = "botao";
+  btnProx.id = "btn-proxima";
+  btnProx.textContent = sessao.indice === sessao.perguntas.length - 1 ? "Ver resultado" : "Próxima pergunta";
+  btnProx.disabled = true;
+  btnProx.addEventListener("click", proximaPergunta);
+  rodape.appendChild(btnProx);
+  card.appendChild(rodape);
+
+  cont.appendChild(card);
+}
+
+function responder(idxEscolhido) {
+  const p = sessao.perguntas[sessao.indice];
+  const botoes = document.querySelectorAll(".opcao");
+  const acertou = p.opcoesEmbaralhadas[idxEscolhido].ehCorreta;
+
+  botoes.forEach((b, i) => {
+    b.disabled = true;
+    if (p.opcoesEmbaralhadas[i].ehCorreta) b.classList.add("correta");
+    else if (i === idxEscolhido) b.classList.add("errada-escolhida");
+  });
+
+  const fb = document.getElementById("feedback-atual");
+  fb.className = "feedback-box " + (acertou ? "acerto" : "erro");
+  fb.innerHTML =
+    '<div class="veredito">' + (acertou ? "Acertou! ✔" : "Não foi dessa vez.") + '</div>' +
+    '<div>' + p.exp + '</div>';
+
+  if (acertou) sessao.acertos++;
+  sessao.respostas.push({ pergunta: p.q, modulo: p.modulo, nivel: p.nivel, acertou, exp: p.exp });
+
+  document.getElementById("btn-proxima").disabled = false;
+}
+
+function proximaPergunta() {
+  sessao.indice++;
+  if (sessao.indice >= sessao.perguntas.length) {
+    mostrarResultado();
+  } else {
+    renderizarPergunta();
+  }
+}
+
+function mostrarResultado() {
+  document.getElementById("tela-quiz").classList.add("oculto");
+  const tela = document.getElementById("tela-resultado");
+  tela.classList.remove("oculto");
+
+  const total = sessao.perguntas.length;
+  const acertos = sessao.acertos;
+  const erros = total - acertos;
+  const pct = Math.round((acertos / total) * 100);
+
+  let html = '<div class="tela-resultado">';
+  html += '<h2 style="border:none;">Resultado</h2>';
+  html += '<div class="placar-grande">' + acertos + ' / ' + total + '</div>';
+  html += '<div style="font-size:16px;color:var(--cinza-2);">' + pct + '% de aproveitamento</div>';
+  html += '<div class="resumo-grid">';
+  html += '<div class="resumo-card"><div class="numero">' + total + '</div><div class="rotulo">Perguntas</div></div>';
+  html += '<div class="resumo-card"><div class="numero">' + acertos + '</div><div class="rotulo">Acertos</div></div>';
+  html += '<div class="resumo-card"><div class="numero">' + erros + '</div><div class="rotulo">Erros</div></div>';
+  html += '</div>';
+
+  html += '<div class="lista-revisao"><h2 style="border:none;">Resumo das respostas</h2>';
+  sessao.respostas.forEach((r, i) => {
+    html += '<div class="item-revisao ' + (r.acertou ? "acertou" : "errou") + '">';
+    html += '<div class="p">' + (i + 1) + '. [' + rotuloNivel(r.nivel) + ' — ' + r.modulo + '] ' + r.pergunta + '</div>';
+    html += '<div>' + (r.acertou ? "Você acertou. " : "Você errou. ") + r.exp + '</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+
+  html += '<div class="acoes-finais">';
+  html += '<button class="botao" id="btn-jogar-de-novo">Sortear novo quiz</button>';
+  html += '<button class="botao secundario" id="btn-mudar-filtro">Mudar filtros</button>';
+  html += '</div></div>';
+
+  tela.innerHTML = html;
+
+  document.getElementById("btn-jogar-de-novo").addEventListener("click", () => {
+    document.getElementById("btn-comecar").click();
+  });
+  document.getElementById("btn-mudar-filtro").addEventListener("click", () => {
+    tela.classList.add("oculto");
+    document.getElementById("tela-config").classList.remove("oculto");
+  });
+}
+</script>
+</body>
+</html>
